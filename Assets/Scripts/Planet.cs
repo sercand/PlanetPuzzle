@@ -11,7 +11,7 @@ public class Planet : MonoBehaviour
     private List<Vector2> uvs;
     private List<Color> colors;
     private List<int> triangles;
-    private readonly List<PlanetPiece> childs = new List<PlanetPiece>();
+    public readonly List<PlanetPiece> childs = new List<PlanetPiece>();
     private MeshFilter meshFilter;
     public bool BodyEnabled = false;
     private static int lastId = 0;
@@ -77,7 +77,14 @@ public class Planet : MonoBehaviour
     {
         if (childs.Contains(o)) childs.Remove(o);
     }
-
+	public bool IsComplete()
+	{
+		foreach (var child in childs) {
+			if(!child.IsGrabbed)		
+				return false;
+		}
+		return true;
+	}
     public int VertexCount
     {
         get

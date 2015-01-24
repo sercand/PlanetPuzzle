@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.Temp
+namespace Assets.Scripts
 {
     public class PuzzlePiece
     {

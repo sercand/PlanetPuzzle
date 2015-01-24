@@ -1,42 +1,63 @@
 ﻿using System.Collections.Generic;
 using System.Reflection.Emit;
-using Assets.Scripts.Temp;
 using UnityEngine;
 using UnityEngine.UI;
+using Assets.Scripts;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-
-    [SerializeField] private Planet planetPrefab;
-    [SerializeField] private Planet planetPrefab2;
+    [SerializeField] private Planet planet1;
+    [SerializeField] private Planet planet2;
     [SerializeField] private Text forceText;
     [SerializeField] private GameObject HomeScene;
     [SerializeField] private GameObject PlayScene;
     [SerializeField] private GameObject WinScene;
     [SerializeField] private GameObject GameOverScene;
     [SerializeField] private Planet[] planetPrefabs;
+	private Dictionary<int,Level> Levels;
+
     private GameScene scene = GameScene.Playing;
     private GameState state = GameState.Combine;
-    public int CurrentLevelId = 1;
+    public int CurrentLevelId = 0;
 
     private void Awake()
     {
         Instance = this;
+		Levels = new Dictionary<int, Level> ();
+		int levelIndex = 0;
+		Levels.Add(levelIndex++, new Level(levelIndex,2,new int[]{3,3}, 0.5f ));
+		Levels.Add(levelIndex++, new Level(levelIndex,3,new int[]{3,3,3}, 0.5f ));
+		Levels.Add(levelIndex++, new Level(levelIndex,4,new int[]{3,3,3,3}, 0.5f ));
+
     }
 
     // Use this for initialization
     private void Start()
     {
-        CreatePlanet(planetPrefab, new Vector3(0, -1f));
-        CreatePlanet(planetPrefab2, new Vector3(0, 1f));
-    }
+		ChangeScene (GameScene.Home);
 
+    }
+	private void clearScenes()
+	{
+		HomeScene.gameObject.SetActive(false);
+		PlayScene.gameObject.SetActive(false);
+		WinScene.gameObject.SetActive(false);
+		GameOverScene.gameObject.SetActive(false);
+	}
     // Update is called once per frame
     private void Update()
     {
 
     }
+	public void CheckAllPlanetsCompleted()
+	{
+		
+	}
+	public void onReadyClicked()
+	{
+		ChangeScene (GameScene.Playing);
+	}
 
     public void CreatePlanet(Planet p, Vector3 start)
     {
@@ -119,17 +140,75 @@ public class GameManager : MonoBehaviour
     public void LoadLevel(int levelID)
     {
         CurrentLevelId = levelID;
+		Level level;
+		if(!Levels.TryGetValue (CurrentLevelId, out level))
+		{
+			Debug.LogError("LevelID not found: " + CurrentLevelId);
+			return;
+		}
+
+		for (int i = 0; i < level.PlanetCount; i++) {
+
+			CreatePlanet(GetRandomPrefab(),new Vector3(0,i,0));
+
+		}
     }
 
-    public void ChangeScene(GameScene stt)
+	public Planet GetRandomPrefab()
+	{
+		int randomVal = Random.Range (0, 1);
+		switch (randomVal) {
+			case 0:
+				return planet1;
+			case 1:
+				return planet2;
+			default:
+				return planet1;
+		}
+
+	}
+
+	public void InitializePlayzone()
+	{
+		LoadLevel (CurrentLevelId++);
+		//CreatePlanet(planetPrefab, new Vector3(0, -1f));
+		//CreatePlanet(planetPrefab2, new Vector3(0, 1f));
+	}
+
+    public void ChangeScene(GameScene scene)
     {
-        if (stt == GameScene.GameOver)
-            GameOverScene.SetActive(true);
+		clearScenes ();
+		switch (scene) {
+			case GameScene.Home:
+				HomeScene.SetActive (true);
+				break;
+			case GameScene.GameOver:
+				GameOverScene.SetActive(true);
+				break;
+			case GameScene.Playing:
+				PlayScene.SetActive (true);
+				InitializePlayzone();
+				break;
+			case GameScene.Win:
+				WinScene.SetActive (true);
+				break;
+		}
+        
     }
 
-    public void ChangeState(GameScene stt)
+    public void ChangeState(GameState state)
     {
+		switch (state) {
+			case GameState.Ready:
+				
+				break;
+			case GameState.Combine:
 
+				break;
+			case GameState.Survive:
+		
+				break;
+		}
     }
 }
 

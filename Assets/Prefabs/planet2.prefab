@@ -12,7 +12,7 @@ GameObject:
   - 23: {fileID: 2332954}
   - 114: {fileID: 11432954}
   m_Layer: 0
-  m_Name: planetPrefab
+  m_Name: planet2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72,7 +72,7 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 2100000, guid: 6ef8c28b62402aa48ac08ede71bd7251, type: 2}
+  - {fileID: 2100000, guid: 4eef89fcab92d8446887d728e4f462b0, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -113,7 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 332fb141e4756b74ea046c3bfacf09b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 6ef8c28b62402aa48ac08ede71bd7251, type: 2}
+  material: {fileID: 2100000, guid: 4eef89fcab92d8446887d728e4f462b0, type: 2}
   scaleRatio: 512
   Body: {fileID: 11491384}
   BodyEnabled: 0

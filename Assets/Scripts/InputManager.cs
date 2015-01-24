@@ -44,6 +44,7 @@ public class InputManager : MonoBehaviour,
 
     public void OnDrag(PointerEventData eventData)
     {
+        
         if (body == null) return;
         Vector2 dp = Camera.ScreenToWorldPoint(eventData.position);
         positionChange = dp - previousPosition;

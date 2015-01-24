@@ -8,10 +8,17 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [SerializeField] private GameState state = GameState.Playing;
     [SerializeField] private Planet planetPrefab;
     [SerializeField] private Planet planetPrefab2;
     [SerializeField] private Text forceText;
+    [SerializeField] private GameObject HomeScene;
+    [SerializeField] private GameObject PlayScene;
+    [SerializeField] private GameObject WinScene;
+    [SerializeField] private GameObject GameOverScene;
+    [SerializeField] private Planet[] planetPrefabs;
+    private GameScene scene = GameScene.Playing;
+    private GameState state = GameState.Combine;
+    public int CurrentLevelId = 1;
 
     private void Awake()
     {
@@ -34,7 +41,6 @@ public class GameManager : MonoBehaviour
     public void CreatePlanet(Planet p, Vector3 start)
     {
         var planet = (Planet) Instantiate(p);
-        planet.scaleRatio = 250;
 
         PuzzlePiece pp1 = new PuzzlePiece(), pp2 = new PuzzlePiece(), pp3 = new PuzzlePiece();
         var v1 = new Vector3(0, 0, 0);
@@ -109,12 +115,35 @@ public class GameManager : MonoBehaviour
         }
         forceText.text = addForce ? "StopForce" : "StartForce";
     }
+
+    public void LoadLevel(int levelID)
+    {
+        CurrentLevelId = levelID;
+    }
+
+    public void ChangeScene(GameScene stt)
+    {
+        if (stt == GameScene.GameOver)
+            GameOverScene.SetActive(true);
+    }
+
+    public void ChangeState(GameScene stt)
+    {
+
+    }
+}
+
+public enum GameScene
+{
+    Home,
+    Playing,
+    GameOver,
+    Win
 }
 
 public enum GameState
 {
-    Intro,
-    Playing,
-    GameOver,
-    Win
+    Ready,
+    Combine,
+    Survive
 }

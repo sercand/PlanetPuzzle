@@ -62,6 +62,7 @@ public class PlanetPiece : MonoBehaviour, IPhysicsObject
         PhysicsManager.Instance.UnregisterBody(this);
 
     }
+
     public void Grab()
     {
         if (rigidbody2D != null)
@@ -73,7 +74,11 @@ public class PlanetPiece : MonoBehaviour, IPhysicsObject
         }
     }
 
-
+    //todo:
+    public void BecomeFree()
+    {
+        
+    }
 
     public void SetPiece(PuzzlePiece p)
     {

@@ -10,8 +10,9 @@ using UnityEngine;
 [RequireComponent(typeof (PolygonCollider2D), typeof (Rigidbody2D))]
 public class PlanetPiece : MonoBehaviour
 {
-    private Planet m_planet;
     public PuzzlePiece Piece;
+    public bool IsDragging = false;
+    private Planet m_planet;
     private Vector2[] uvs;
     private Vector3 mean;
 
@@ -35,7 +36,7 @@ public class PlanetPiece : MonoBehaviour
             v += transform.localPosition;
             vertices.Add(v);
             uvList.Add(uvs[i]);
-            colors.Add(Color.white);
+            colors.Add(IsDragging ? Color.yellow : Color.white);
         }
         for (var i = 0; i < Piece.Triangenles.Count; i++)
         {
@@ -46,11 +47,14 @@ public class PlanetPiece : MonoBehaviour
     private void OnEnable()
     {
         Planet.RegisterPiece(this);
+        PhysicsManager.Instance.RegisterBody(this);
     }
 
     private void OnDisable()
     {
         Planet.UnregisterPiece(this);
+        PhysicsManager.Instance.UnregisterBody(this);
+
     }
 
     public void SetPiece(PuzzlePiece p)

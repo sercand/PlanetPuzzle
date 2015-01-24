@@ -13,6 +13,7 @@ public class InputManager : MonoBehaviour,
 {
     [SerializeField] private Camera Camera;
     private Rigidbody2D body;
+    private PlanetPiece draggingObject;
     private Vector2 nextPosition = Vector2.zero;
     private Vector2 previousPosition;
     private Vector2 positionChange;
@@ -26,9 +27,11 @@ public class InputManager : MonoBehaviour,
         if (hit.collider != null)
         {
             body = hit.collider.attachedRigidbody;
+            draggingObject = hit.collider.gameObject.GetComponent<PlanetPiece>();
+            draggingObject.IsDragging = true;
             body.velocity = Vector2.zero;
             nextPosition = body.position;
-            positionChange = nextPosition;
+            positionChange = Vector2.zero;
             velocity = Vector2.zero;
         }
     }
@@ -47,6 +50,7 @@ public class InputManager : MonoBehaviour,
     {
         if (body == null) return;
         body.velocity = velocity;
+        draggingObject.IsDragging = false;
         body = null;
     }
 

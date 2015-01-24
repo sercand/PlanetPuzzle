@@ -6,14 +6,21 @@ public class Planet : MonoBehaviour
 {
     [SerializeField] private Material material;
     public float scaleRatio = 100f;
-
+    public PlanetBody Body;
     private List<Vector3> vertices;
     private List<Vector2> uvs;
     private List<Color> colors;
     private List<int> triangles;
     private readonly List<PlanetPiece> childs = new List<PlanetPiece>();
     private MeshFilter meshFilter;
-
+    public bool BodyEnabled = false;
+    private static int lastId = 0;
+    public int Id;
+    public void EnableBody()
+    {
+        Body.gameObject.SetActive(true);
+        BodyEnabled = true;
+    }
     public int TextureWidth
     {
         get { return material.mainTexture.width; }
@@ -22,6 +29,11 @@ public class Planet : MonoBehaviour
     public int TextureHeight
     {
         get { return material.mainTexture.height; }
+    }
+
+    private void Awake()
+    {
+        Id = ++lastId;
     }
 
     private void Start()

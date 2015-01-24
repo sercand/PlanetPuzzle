@@ -2,6 +2,7 @@
 // # Created by Sercan Degirmenci on 2015.01.24
 // #
 
+using Assets.Scripts;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -13,7 +14,7 @@ public class InputManager : MonoBehaviour,
 {
     [SerializeField] private Camera Camera;
     private Rigidbody2D body;
-    private PlanetPiece draggingObject;
+    private IPhysicsObject draggingObject;
     private Vector2 nextPosition = Vector2.zero;
     private Vector2 previousPosition;
     private Vector2 positionChange;
@@ -28,6 +29,11 @@ public class InputManager : MonoBehaviour,
         {
             body = hit.collider.attachedRigidbody;
             draggingObject = hit.collider.gameObject.GetComponent<PlanetPiece>();
+            if (draggingObject.IsGrabbed)
+            {
+                draggingObject = ((PlanetPiece) draggingObject).Planet.Body;
+            }
+
             draggingObject.IsDragging = true;
             body.velocity = Vector2.zero;
             nextPosition = body.position;
@@ -41,7 +47,7 @@ public class InputManager : MonoBehaviour,
         if (body == null) return;
         Vector2 dp = Camera.ScreenToWorldPoint(eventData.position);
         positionChange = dp - previousPosition;
-        nextPosition += positionChange;
+        nextPosition = body.position + positionChange;
 
         previousPosition = dp;
     }
@@ -57,7 +63,7 @@ public class InputManager : MonoBehaviour,
     public void FixedUpdate()
     {
         if (body == null) return;
-        
+
         var newVelocity = positionChange/Time.deltaTime;
         velocity = Vector2.Lerp(velocity, newVelocity, Time.deltaTime*10);
         positionChange = Vector2.zero;

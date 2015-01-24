@@ -3,20 +3,27 @@
 // #
 
 using System.Collections.Generic;
+using Assets.Scripts;
 using Assets.Scripts.Temp;
 using UnityEngine;
 
 
-[RequireComponent(typeof (PolygonCollider2D), typeof (Rigidbody2D))]
-public class PlanetPiece : MonoBehaviour
+[RequireComponent(typeof (PolygonCollider2D))]
+public class PlanetPiece : MonoBehaviour, IPhysicsObject
 {
     public PuzzlePiece Piece;
-    public bool IsDragging = false;
+    public bool IsDragging { get; set; }
+    private bool m_grabbed=false;
+    public bool IsGrabbed
+    {
+        get { return m_grabbed; }
+    }
+
     private Planet m_planet;
     private Vector2[] uvs;
-    private Vector3 mean;
-
-    private Planet Planet
+    public Vector3 mean;
+    public bool ApplyForceOthers = false;
+    public Planet Planet
     {
         get { return m_planet ?? (m_planet = gameObject.GetComponentInParent<Planet>()); }
     }
@@ -32,8 +39,8 @@ public class PlanetPiece : MonoBehaviour
         for (var i = 0; i < Piece.Vertices.Count; i++)
         {
             var vertex = Piece.Vertices[i];
-            var v = transform.localRotation*vertex;
-            v += transform.localPosition;
+            var v = transform.rotation*vertex;
+            v += transform.position;
             vertices.Add(v);
             uvList.Add(uvs[i]);
             colors.Add(IsDragging ? Color.yellow : Color.white);
@@ -49,13 +56,24 @@ public class PlanetPiece : MonoBehaviour
         Planet.RegisterPiece(this);
         PhysicsManager.Instance.RegisterBody(this);
     }
-
     private void OnDisable()
     {
         Planet.UnregisterPiece(this);
         PhysicsManager.Instance.UnregisterBody(this);
 
     }
+    public void Grab()
+    {
+        if (rigidbody2D != null)
+        {
+            IsDragging = false;
+            m_grabbed = true;
+            transform.SetParent(Planet.Body.transform, true);
+            Destroy(GetComponent<Rigidbody2D>());
+        }
+    }
+
+
 
     public void SetPiece(PuzzlePiece p)
     {
@@ -85,5 +103,32 @@ public class PlanetPiece : MonoBehaviour
         }
         col.SetPath(0, path);
         transform.localPosition = mean;
+    }
+
+    public bool IsNeighbourWith(PlanetPiece other, out Edge edge)
+    {
+        for (int i = 0; i < Piece.Edges.Count; i++)
+        {
+            if (Piece.Edges[i].n1 == other.Piece || Piece.Edges[i].n2 == other.Piece)
+            {
+                edge = Piece.Edges[i];
+                return true;
+            }
+        }
+        edge = null;
+        return false;
+    }
+
+    public Vector3 TransfromVertex(Vector3 v)
+    {
+        v /= Planet.scaleRatio;
+        v -= mean;
+        return v;
+    }
+
+
+    public PhysicsObjectType Type
+    {
+        get { return PhysicsObjectType.Piece; }
     }
 }

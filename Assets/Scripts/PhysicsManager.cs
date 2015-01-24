@@ -40,7 +40,6 @@ public class PhysicsManager : MonoBehaviour
         {
             for (var j = i + 1; j < bodies.Count; j++)
             {
-                if (i == j) continue;
                 // if (bodies[i].IsDragging || bodies[j].IsDragging) continue;
                 var ri = bodies[i].rigidbody2D;
                 var rj = bodies[j].rigidbody2D;

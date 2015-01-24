@@ -15,9 +15,12 @@ public class Planet : MonoBehaviour
     private MeshFilter meshFilter;
     public bool BodyEnabled = false;
     private static int lastId = 0;
+	private bool isComplete = false;
+
     public int Id;
     public void EnableBody()
     {
+		Body.ParentPlanet = this;
         Body.gameObject.SetActive(true);
         BodyEnabled = true;
     }
@@ -30,6 +33,10 @@ public class Planet : MonoBehaviour
     {
         get { return material.mainTexture.height; }
     }
+	public delegate void  PlanetCompletedEventHandler(Planet planet);
+	public delegate void  PlanetDestroyedEventHandler(Planet planet);
+	public event PlanetCompletedEventHandler PlanetCompletedEvent;
+	public event PlanetDestroyedEventHandler PlanetDestroyedEvent;
 
     private void Awake()
     {
@@ -81,8 +88,25 @@ public class Planet : MonoBehaviour
 	{
 		foreach (var child in childs) {
 			if(!child.IsGrabbed)		
+			{
+				if(isComplete)
+				{
+					isComplete = false;
+					if(PlanetDestroyedEvent != null)
+						PlanetDestroyedEvent (this);
+					else
+						Debug.Log("PlanetDestroyedEvent Null");
+				}
 				return false;
+			}
+				
 		}
+		isComplete = true;
+		if(PlanetCompletedEvent != null)
+			PlanetCompletedEvent (this);
+		else
+			Debug.Log("PlanetComplete Null");
+
 		return true;
 	}
     public int VertexCount

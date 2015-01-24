@@ -11,7 +11,7 @@ public class PhysicsManager : MonoBehaviour
     public static PhysicsManager Instance;
     [HideInInspector]
     public readonly List<PlanetPiece> Bodies = new List<PlanetPiece>();
-    public readonly List<PlanetBody> Planets = new List<PlanetBody>();
+	public readonly List<Planet> Planets = new List<Planet>();
 
     [SerializeField] private float InteractionRange = 2;
     [SerializeField] private float InteractionCoefficient = 2;
@@ -33,16 +33,16 @@ public class PhysicsManager : MonoBehaviour
         if (Bodies.Contains(body))
             Bodies.Remove(body);
     }
-    public void RegisterPlanet(PlanetBody body)
+	public void RegisterPlanet(Planet planet)
     {
-        if (!Planets.Contains(body))
-            Planets.Add(body);
+        if (!Planets.Contains(planet))
+            Planets.Add(planet);
     }
 
-    public void UnregisterPlanet(PlanetBody body)
+	public void UnregisterPlanet(Planet planet)
     {
-        if (Planets.Contains(body))
-            Planets.Remove(body);
+		if (Planets.Contains(planet))
+			Planets.Remove(planet);
     }
     public void Start()
     {
@@ -84,8 +84,8 @@ public class PhysicsManager : MonoBehaviour
         {
             for (var j = i + 1; j < Planets.Count; j++)
             {
-                var ri = Planets[i].rigidbody2D;
-                var rj = Planets[j].rigidbody2D;
+                var ri = Planets[i].Body.rigidbody2D;
+                var rj = Planets[j].Body.rigidbody2D;
 
                 if (ri == null || rj == null) continue;
                 var dp = ri.position - rj.position;

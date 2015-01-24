@@ -17,13 +17,15 @@ public class PlanetBody : MonoBehaviour, IPhysicsObject
 
     public bool IsGrabbed { get; private set; }
 
+	public Planet ParentPlanet { get; set;}
+
     private void OnEnable()
     {
-        PhysicsManager.Instance.RegisterPlanet(this);
-    }
-
+		PhysicsManager.Instance.RegisterPlanet(ParentPlanet);
+	}
+	
     private void OnDisable()
     {
-        PhysicsManager.Instance.UnregisterPlanet(this);
-    }
+		PhysicsManager.Instance.UnregisterPlanet(ParentPlanet);
+	}
 }

@@ -16,13 +16,31 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject GameOverScene;
     [SerializeField] private Planet[] planetPrefabs;
 	private Dictionary<int,Level> Levels;
-
+	
     private GameScene scene = GameScene.Playing;
     private GameState state = GameState.Combine;
     public int CurrentLevelId = 0;
+	public int TotalCompletedPlanets {get;set;}
 
+	public void HandlePlanetCompleted(Planet planet)
+	{
+		Debug.Log("HandlePlanetCompleted!");
+		TotalCompletedPlanets++;
+		if (TotalCompletedPlanets == Levels [CurrentLevelId].PlanetCount) {
+			ChangeState(GameState.Survive);
+		}
+	}
+	public void HandlePlanetDestroyed(Planet planet)
+	{
+		Debug.Log("HandlePlanetDestroyed!");
+		TotalCompletedPlanets--;
+		if (state == GameState.Survive) {
+			ChangeState(GameState.Combine);
+		}
+	}
     private void Awake()
     {
+	
         Instance = this;
 		Levels = new Dictionary<int, Level> ();
 		int levelIndex = 0;
@@ -62,6 +80,9 @@ public class GameManager : MonoBehaviour
     public void CreatePlanet(Planet p, Vector3 start)
     {
         var planet = (Planet) Instantiate(p);
+
+		planet.PlanetCompletedEvent += HandlePlanetCompleted;
+		planet.PlanetDestroyedEvent += HandlePlanetDestroyed;
 
         PuzzlePiece pp1 = new PuzzlePiece(), pp2 = new PuzzlePiece(), pp3 = new PuzzlePiece();
         var v1 = new Vector3(0, 0, 0);
@@ -156,14 +177,14 @@ public class GameManager : MonoBehaviour
 
 	public Planet GetRandomPrefab()
 	{
-		int randomVal = Random.Range (0, 1);
+		int randomVal = Random.Range (0, 2);
 		switch (randomVal) {
 			case 0:
 				return planet1;
 			case 1:
 				return planet2;
 			default:
-				return planet1;
+				return planet2;
 		}
 
 	}
@@ -193,10 +214,10 @@ public class GameManager : MonoBehaviour
 				WinScene.SetActive (true);
 				break;
 		}
-        
-    }
-
-    public void ChangeState(GameState state)
+		Debug.Log ("GameScene Changed: " + scene.ToString ());
+	}
+	
+	public void ChangeState(GameState state)
     {
 		switch (state) {
 			case GameState.Ready:
@@ -209,7 +230,11 @@ public class GameManager : MonoBehaviour
 		
 				break;
 		}
+		Debug.Log ("GameState Changed: " + state.ToString ());
+
     }
+
+
 }
 
 public enum GameScene

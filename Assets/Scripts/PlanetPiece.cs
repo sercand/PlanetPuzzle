@@ -70,16 +70,23 @@ public class PlanetPiece : MonoBehaviour, IPhysicsObject
             m_grabbed = true;
             transform.SetParent(Planet.Body.transform, true);
             Destroy(GetComponent<Rigidbody2D>());
+			Planet.IsComplete();
         }
+
     }
 
     //todo:
     public void BecomeFree()
     {
-        
-    }
 
-    public void SetPiece(PuzzlePiece p)
+		m_grabbed = false;
+		transform.SetParent (null);
+		//Create Rigidbody again?
+		//GetComponent<Rigidbody2D> ();
+		Planet.IsComplete ();
+	}
+	
+	public void SetPiece(PuzzlePiece p)
     {
         Piece = p;
         var col = GetComponent<PolygonCollider2D>();

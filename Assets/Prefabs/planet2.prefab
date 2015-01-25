@@ -30,7 +30,7 @@ GameObject:
   - 50: {fileID: 5091384}
   m_Layer: 0
   m_Name: Body
-  m_TagString: Untagged
+  m_TagString: planet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 4eef89fcab92d8446887d728e4f462b0, type: 2}
-  scaleRatio: 512
+  scaleRatio: 256
   Body: {fileID: 11491384}
   BodyEnabled: 0
   Id: 0

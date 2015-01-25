@@ -14,7 +14,7 @@ GameObject:
   - 114: {fileID: 11418358}
   m_Layer: 9
   m_Name: meteor
-  m_TagString: Untagged
+  m_TagString: meteor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26,8 +26,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 118358}
   m_LocalRotation: {x: 0, y: 0, z: .330761462, w: .94371438}
-  m_LocalPosition: {x: -12.6999998, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalPosition: {x: -.0287205689, y: -.182263598, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -57,11 +57,14 @@ PolygonCollider2D:
   m_IsTrigger: 0
   m_Poly:
     m_Paths:
-    - - {x: .648983419, y: .192334443}
-      - {x: -.025995858, y: .633360147}
-      - {x: -.658279657, y: .127122819}
-      - {x: -.375160992, y: -.628440678}
-      - {x: .449597508, y: -.592042387}
+    - - {x: .380667746, y: -.199370682}
+      - {x: .45178479, y: .00635036593}
+      - {x: .235493079, y: .328351468}
+      - {x: -.0901695564, y: .425559908}
+      - {x: -.432431996, y: .13724032}
+      - {x: -.413251847, y: -.112318687}
+      - {x: -.244371638, y: -.362529606}
+      - {x: .215420574, y: -.376225263}
 --- !u!114 &11418358
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -69,6 +69,7 @@ public class PlanetPiece : MonoBehaviour, IPhysicsObject
         {
             IsDragging = false;
             m_grabbed = true;
+			//this.gameObject.SetActive(false);
             transform.SetParent(Planet.Body.transform, true);
             Destroy(GetComponent<Rigidbody2D>());
 			Planet.IsComplete();
@@ -80,6 +81,7 @@ public class PlanetPiece : MonoBehaviour, IPhysicsObject
     public void BecomeFree()
     {
 		IsDragging = false;
+
 		m_grabbed = false;
 		transform.SetParent (Planet.transform);
 		//Create Rigidbody again?

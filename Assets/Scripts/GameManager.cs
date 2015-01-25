@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Planet planet1;
     [SerializeField] private Planet planet2;
 	[SerializeField] private Meteor meteor;
-    [SerializeField] private Text forceText;
+    [SerializeField] private Image countDownImage;
     [SerializeField] private GameObject HomeScene;
     [SerializeField] private GameObject PlayScene;
     [SerializeField] private GameObject WinScene;
@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     public int CurrentLevelId = 0;
 	public int TotalCompletedPlanets {get;set;}
 	public Coroutine Spawner;
-	private const int surviveFor = 10;
+	private const int surviveFor = 11;
 	public int SecondsToSurviveFor = surviveFor;
 	
 	public void HandlePlanetCompleted(Planet planet)
@@ -158,14 +158,15 @@ public class GameManager : MonoBehaviour
 
     private bool addForce = false;
 
-    public void OnStartForce()
+    public void DispersePlanetPieces()
     {
-        addForce = !addForce;
+		addForce = true;
         foreach (var body in PhysicsManager.Instance.Bodies)
         {
             body.ApplyForceOthers = addForce;
+
         }
-        forceText.text = addForce ? "StopForce" : "StartForce";
+        
     }
 
     public void LoadLevel(int levelID)
@@ -211,7 +212,7 @@ public class GameManager : MonoBehaviour
 	{
 
 		LoadLevel (++CurrentLevelId);
-
+		DispersePlanetPieces ();
 		//CreatePlanet(planetPrefab, new Vector3(0, -1f));
 		//CreatePlanet(planetPrefab2, new Vector3(0, 1f));
 	}
@@ -241,6 +242,10 @@ public class GameManager : MonoBehaviour
 	{
 		ChangeScene (GameScene.Home);
 	}
+
+	public Coroutine meteorSpawner;
+	public Coroutine victoryTimer;
+
 	public void ChangeState(GameState stt)
     {
 		state = stt;
@@ -250,10 +255,17 @@ public class GameManager : MonoBehaviour
 				break;
 			case GameState.Combine:
 				SecondsToSurviveFor  = surviveFor;
+				countDownImage.gameObject.SetActive(false);
+				countDownImage.enabled = false;
 				break;
 			case GameState.Survive:
-				StartCoroutine(SpawnMeteors());
-				StartCoroutine (VictoryTimer());
+
+				if(victoryTimer == null || meteorSpawner == null)
+				{
+					meteorSpawner = StartCoroutine(SpawnMeteors());
+					victoryTimer = StartCoroutine (VictoryTimer());
+				}
+				
 				break;
 		}
 		Debug.Log ("GameState Changed: " + state.ToString ());
@@ -266,6 +278,11 @@ public class GameManager : MonoBehaviour
 			
 			if(state == GameState.Survive)
 			{
+				string path = ""+(SecondsToSurviveFor-1);
+				countDownImage.gameObject.SetActive(true);
+				countDownImage.enabled = true;
+				countDownImage.GetComponent<Image>().sprite = Resources.Load<Sprite>(path);
+				Debug.Log("Texture : " + path);
 				SecondsToSurviveFor--;
 				Debug.Log("Survice for! " + SecondsToSurviveFor);
 				if(SecondsToSurviveFor == 0)
@@ -273,6 +290,8 @@ public class GameManager : MonoBehaviour
 					SecondsToSurviveFor = surviveFor;
 					ChangeState(GameState.Ready);
 					ChangeScene(GameScene.Win);
+					countDownImage.gameObject.SetActive(false);
+					countDownImage.enabled = false;
 				}
 			}
 			

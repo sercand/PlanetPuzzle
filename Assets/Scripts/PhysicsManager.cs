@@ -54,6 +54,7 @@ public class PhysicsManager : MonoBehaviour
         int draggingIndex = -1;
         for (var i = 0; i < Bodies.Count; i++)
         {
+
             if (Bodies[i].IsDragging)
             {
                 draggingIndex = i;
@@ -75,7 +76,7 @@ public class PhysicsManager : MonoBehaviour
                 var dist = dp.SqrMagnitude();
                 dp.Normalize();
                 var dp2 = -dp;
-                var factor = (InteractionRange/dist)*(InteractionCoefficient*2);
+                var factor = (InteractionRange/dist)*(InteractionCoefficient*2)/16;
                 ri.AddForce(dp*factor);
                 rj.AddForce(dp2*factor);
             }
@@ -104,9 +105,11 @@ public class PhysicsManager : MonoBehaviour
             var body = Bodies[draggingIndex];
             for (var i = 0; i < Bodies.Count; i++)
             {
+				//Debug.Log("3.Bodies");
                 if (i == draggingIndex) continue;
                 if (CanGrab(body, Bodies[i], out diff))
                 {
+					//Debug.Log("3.Bodies.CanGrab");
                     GrabTwo(body, Bodies[i], diff);
                     return;
                 }
@@ -116,12 +119,14 @@ public class PhysicsManager : MonoBehaviour
 
     private void GrabTwo(PlanetPiece p1, PlanetPiece p2, Vector2 diff)
     {
+		Debug.Log("GrabTwo");
         bool b1 = p1.IsGrabbed, b2 = p2.IsGrabbed;
         var planet = p1.Planet;
         var half_ps = new Vector3(planet.TextureWidth/planet.scaleRatio,
             planet.TextureHeight/planet.scaleRatio)/2;
         if (planet.BodyEnabled && !b1 && !b2)
         {
+			Debug.Log("planet.BodyEnabled && !b1 && !b2");
             return;
         }
         if (!planet.BodyEnabled)

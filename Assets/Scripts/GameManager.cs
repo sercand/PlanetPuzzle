@@ -3,12 +3,14 @@ using System.Reflection.Emit;
 using UnityEngine;
 using UnityEngine.UI;
 using Assets.Scripts;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     [SerializeField] private Planet planet1;
     [SerializeField] private Planet planet2;
+	[SerializeField] private Meteor meteor;
     [SerializeField] private Text forceText;
     [SerializeField] private GameObject HomeScene;
     [SerializeField] private GameObject PlayScene;
@@ -16,7 +18,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject GameOverScene;
     [SerializeField] private Planet[] planetPrefabs;
 	private Dictionary<int,Level> Levels;
-	
+	public Camera mainCamera;
+
     private GameScene scene = GameScene.Playing;
     private GameState state = GameState.Combine;
     public int CurrentLevelId = 0;
@@ -44,9 +47,9 @@ public class GameManager : MonoBehaviour
         Instance = this;
 		Levels = new Dictionary<int, Level> ();
 		int levelIndex = 0;
-		Levels.Add(levelIndex++, new Level(levelIndex,2,new int[]{3,3}, 0.5f ));
-		Levels.Add(levelIndex++, new Level(levelIndex,3,new int[]{3,3,3}, 0.5f ));
-		Levels.Add(levelIndex++, new Level(levelIndex,4,new int[]{3,3,3,3}, 0.5f ));
+		Levels.Add(levelIndex++, new Level(levelIndex,2,new int[]{3,3}, 2.0f ));
+		Levels.Add(levelIndex++, new Level(levelIndex,3,new int[]{3,3,3}, 2.0f ));
+		Levels.Add(levelIndex++, new Level(levelIndex,4,new int[]{3,3,3,3}, 2.0f ));
 
     }
 
@@ -167,12 +170,14 @@ public class GameManager : MonoBehaviour
 			Debug.LogError("LevelID not found: " + CurrentLevelId);
 			return;
 		}
-
+		Debug.Log ("Level ID: " + level.LevelID);
+		Debug.Log ("Planet Count: " + level.PlanetCount);
 		for (int i = 0; i < level.PlanetCount; i++) {
 
-			CreatePlanet(GetRandomPrefab(),new Vector3(0,i,0));
+			CreatePlanet(GetRandomPrefab(),new Vector3(i*Random.Range(-5,5),i*Random.Range(-5,5),0));
 
 		}
+
     }
 
 	public Planet GetRandomPrefab()
@@ -191,7 +196,9 @@ public class GameManager : MonoBehaviour
 
 	public void InitializePlayzone()
 	{
+
 		LoadLevel (CurrentLevelId++);
+
 		//CreatePlanet(planetPrefab, new Vector3(0, -1f));
 		//CreatePlanet(planetPrefab2, new Vector3(0, 1f));
 	}
@@ -227,12 +234,25 @@ public class GameManager : MonoBehaviour
 
 				break;
 			case GameState.Survive:
-		
+				StartCoroutine("SpawnMeteors");
 				break;
 		}
 		Debug.Log ("GameState Changed: " + state.ToString ());
 
     }
+	private IEnumerator SpawnMeteors()
+	{
+
+		Level lev = Levels[CurrentLevelId];
+
+		while (true) {
+			Debug.Log("Creating Meteor!");
+			Meteor met = (Meteor) Instantiate(meteor);
+			yield return new WaitForSeconds (lev.MeteorSpawnPeriodInSeconds);
+			
+			
+		}
+	}
 
 
 }

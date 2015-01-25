@@ -27,9 +27,16 @@ public class InputManager : MonoBehaviour,
 
         if (hit.collider != null)
         {
+			if(hit.collider.tag == "meteor")
+				return;
+			
             body = hit.collider.attachedRigidbody;
+
             draggingObject = hit.collider.gameObject.GetComponent<PlanetPiece>();
-            if (draggingObject.IsGrabbed)
+			if(draggingObject == null)
+				return;
+
+			if (draggingObject.IsGrabbed)
             {
                 draggingObject = ((PlanetPiece) draggingObject).Planet.Body;
             }

@@ -8,13 +8,13 @@ namespace Assets.Scripts
         public int LevelID;
         public int PlanetCount;
         public int[] PlanetPieceCounts;
-		public float MeteorSpawnPerSec;
+		public float MeteorSpawnPeriodInSeconds;
 
-		public Level(int id,int planetCount,int[] planetPieceCounts, float meteorSpawnPerSec)
+		public Level(int id,int planetCount,int[] planetPieceCounts, float meteorSpawnPeriodInSeconds)
 		{
 			LevelID = id;
 			PlanetCount = planetCount;
-			MeteorSpawnPerSec = meteorSpawnPerSec;
+			MeteorSpawnPeriodInSeconds = meteorSpawnPeriodInSeconds;
 			PlanetPieceCounts = planetPieceCounts;
 
 		}

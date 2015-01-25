@@ -80,9 +80,10 @@ public class PlanetPiece : MonoBehaviour, IPhysicsObject
     {
 
 		m_grabbed = false;
-		transform.SetParent (null);
+		transform.SetParent (Planet.transform);
 		//Create Rigidbody again?
-		//GetComponent<Rigidbody2D> ();
+		this.gameObject.AddComponent<Rigidbody2D> ();
+
 		Planet.IsComplete ();
 	}
 	

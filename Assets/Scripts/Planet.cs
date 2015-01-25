@@ -82,7 +82,11 @@ public class Planet : MonoBehaviour
 
     public void UnregisterPiece(PlanetPiece o)
     {
-        if (childs.Contains(o)) childs.Remove(o);
+
+        if (childs.Contains (o)) {
+			childs.Remove (o);
+			Debug.Log("Unregistered a child!");
+		}
     }
 	public bool IsComplete()
 	{

@@ -57,6 +57,7 @@ public class PlanetPiece : MonoBehaviour, IPhysicsObject
     }
     private void OnDisable()
     {
+
         Planet.UnregisterPiece(this);
         PhysicsManager.Instance.UnregisterBody(this);
 
@@ -78,12 +79,13 @@ public class PlanetPiece : MonoBehaviour, IPhysicsObject
     //todo:
     public void BecomeFree()
     {
-
+		IsDragging = false;
 		m_grabbed = false;
 		transform.SetParent (Planet.transform);
 		//Create Rigidbody again?
 		this.gameObject.AddComponent<Rigidbody2D> ();
-
+		Planet.RegisterPiece(this);
+		PhysicsManager.Instance.RegisterBody(this);
 		Planet.IsComplete ();
 	}
 	

@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject PlayScene;
     [SerializeField] private GameObject WinScene;
     [SerializeField] private GameObject GameOverScene;
-    [SerializeField] private Planet[] planetPrefabs;
+	[SerializeField] private List<Planet> planetPrefabs;
 	private Dictionary<int,Level> Levels;
 	public Camera mainCamera;
 
@@ -24,7 +24,10 @@ public class GameManager : MonoBehaviour
     private GameState state = GameState.Combine;
     public int CurrentLevelId = 0;
 	public int TotalCompletedPlanets {get;set;}
-
+	public Coroutine Spawner;
+	private const int surviveFor = 10;
+	public int SecondsToSurviveFor = surviveFor;
+	
 	public void HandlePlanetCompleted(Planet planet)
 	{
 		Debug.Log("HandlePlanetCompleted!");
@@ -47,9 +50,12 @@ public class GameManager : MonoBehaviour
         Instance = this;
 		Levels = new Dictionary<int, Level> ();
 		int levelIndex = 0;
-		Levels.Add(levelIndex++, new Level(levelIndex,2,new int[]{3,3}, 2.0f ));
-		Levels.Add(levelIndex++, new Level(levelIndex,3,new int[]{3,3,3}, 2.0f ));
-		Levels.Add(levelIndex++, new Level(levelIndex,4,new int[]{3,3,3,3}, 2.0f ));
+		Levels.Add(levelIndex, new Level(levelIndex,2,new int[]{3,3}, 2.0f ));
+		levelIndex++;
+		Levels.Add(levelIndex, new Level(levelIndex,3,new int[]{3,3,3}, 2.0f ));
+		levelIndex++;
+		Levels.Add(levelIndex, new Level(levelIndex,4,new int[]{3,3,3,3}, 2.0f ));
+
 
     }
 
@@ -86,6 +92,7 @@ public class GameManager : MonoBehaviour
 
 		planet.PlanetCompletedEvent += HandlePlanetCompleted;
 		planet.PlanetDestroyedEvent += HandlePlanetDestroyed;
+		planetPrefabs.Add (planet);
 
         PuzzlePiece pp1 = new PuzzlePiece(), pp2 = new PuzzlePiece(), pp3 = new PuzzlePiece();
         var v1 = new Vector3(0, 0, 0);
@@ -179,7 +186,13 @@ public class GameManager : MonoBehaviour
 		}
 
     }
-
+	private void ClearPlanets()
+	{
+		foreach (var planetFabs in planetPrefabs) {
+			Destroy(planetFabs.gameObject);		
+		}
+		TotalCompletedPlanets = 0;
+	}
 	public Planet GetRandomPrefab()
 	{
 		int randomVal = Random.Range (0, 2);
@@ -197,7 +210,7 @@ public class GameManager : MonoBehaviour
 	public void InitializePlayzone()
 	{
 
-		LoadLevel (CurrentLevelId++);
+		LoadLevel (++CurrentLevelId);
 
 		//CreatePlanet(planetPrefab, new Vector3(0, -1f));
 		//CreatePlanet(planetPrefab2, new Vector3(0, 1f));
@@ -219,35 +232,68 @@ public class GameManager : MonoBehaviour
 				break;
 			case GameScene.Win:
 				WinScene.SetActive (true);
+				Invoke ("SwitchToHomeScreen",3.0f);
 				break;
 		}
 		Debug.Log ("GameScene Changed: " + scene.ToString ());
 	}
-	
-	public void ChangeState(GameState state)
+	public void SwitchToHomeScreen()
+	{
+		ChangeScene (GameScene.Home);
+	}
+	public void ChangeState(GameState stt)
     {
+		state = stt;
 		switch (state) {
 			case GameState.Ready:
-				
+				ClearPlanets();
 				break;
 			case GameState.Combine:
-
+				SecondsToSurviveFor  = surviveFor;
 				break;
 			case GameState.Survive:
-				StartCoroutine("SpawnMeteors");
+				StartCoroutine(SpawnMeteors());
+				StartCoroutine (VictoryTimer());
 				break;
 		}
 		Debug.Log ("GameState Changed: " + state.ToString ());
 
     }
+	private IEnumerator VictoryTimer()
+	{
+				
+		while (true) {
+			
+			if(state == GameState.Survive)
+			{
+				SecondsToSurviveFor--;
+				Debug.Log("Survice for! " + SecondsToSurviveFor);
+				if(SecondsToSurviveFor == 0)
+				{
+					SecondsToSurviveFor = surviveFor;
+					ChangeState(GameState.Ready);
+					ChangeScene(GameScene.Win);
+				}
+			}
+			
+			yield return new WaitForSeconds (1);
+			
+			
+		}
+	}
 	private IEnumerator SpawnMeteors()
 	{
 
 		Level lev = Levels[CurrentLevelId];
 
 		while (true) {
-			Debug.Log("Creating Meteor!");
-			Meteor met = (Meteor) Instantiate(meteor);
+
+			if(state == GameState.Survive)
+			{
+				Debug.Log("Creating Meteor!");
+				Meteor met = (Meteor) Instantiate(meteor);
+			}
+		
 			yield return new WaitForSeconds (lev.MeteorSpawnPeriodInSeconds);
 			
 			
